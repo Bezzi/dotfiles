@@ -6,6 +6,18 @@ set -u
 # Ask for password upfront
 sudo -v
 
+# Use touch-id instead of typing the root password
+enable_touch_id_sudo () {
+    if [ $EUID -ne 0 ]; then
+        echo "Must be root"
+        exit
+    fi
+    chmod 644 /etc/pam.d/sudo
+    grep -qxF 'auth sufficient pam_tid.so' /etc/pam.d/sudo || printf '%s\n%s\n' "auth sufficient pam_tid.so" "$(cat /etc/pam.d/sudo)" > /etc/pam.d/sudo
+    chmod 444 /etc/pam.d/sudo
+}
+
+sudo su root -c "$(declare -f enable_touch_id_sudo); enable_touch_id_sudo"
 
 #########################
 ##### HomeBrew ##########
@@ -16,18 +28,8 @@ if [[ "$?" != 0 ]] ; then
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
 
-brew cask install iterm2
-brew cask install visual-studio-code
-brew cask install jira
-brew cask install insomnia
-brew cask install lepton
-brew cask install zoom
-brew cask install whatsapp
-brew cask install spotify
-brew cask install hiddenbar
-brew cask install logitech-options
-brew cask install slack
-
+cp Brewfile ~/Brewfile
+brew bundle install
 
 #########################
 ####### Global ##########
@@ -36,6 +38,24 @@ brew cask install slack
 # Enable Dark Mode - Requires log out
 defaults write "Apple Global Domain" AppleInterfaceStyle -string "Dark"
 
+# Finder: Show File Name extensions
+defaults write "Apple Global Domain" AppleShowAllExtensions -bool true
+
+# Secondary Click on right corner - Requires log out
+defaults write "Apple Global Domain"  ContextMenuGesture -integer 1
+defaults write com.apple.AppleMultitouchTrackpad TrackpadRightClick -bool false
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool false
+defaults write com.apple.AppleMultitouchTrackpad TrackpadCornerSecondaryClick -integer 2
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -integer 2
+
+# Primary hostname
+sudo scutil --set HostName entropy
+# Bonjour hostname
+sudo scutil --set LocalHostName entropy
+# Computer name
+sudo scutil --set ComputerName entropy
+# Flush Cache
+dscacheutil -flushcache
 
 #########################
 ##### MacOS Dock ########
@@ -63,54 +83,128 @@ defaults write com.apple.dock wvous-tr-modifier -int 0
 
 # Add Applications to Dock
 
-# Iterm2
-defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/iTerm.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+# Usage: add_user_app_to_dock Spotify
+add_user_app_to_dock () {
+    defaults read com.apple.dock | grep -qi "$1"
+    if [[ "$?" != 0 ]]; then
+        defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/'"$1"'.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+    fi
+}
 
-# Spotify
-defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Spotify.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+# Usage: add_system_app_to_dock Calendar
+add_system_app_to_dock () {
+    defaults read com.apple.dock | grep -qi "$1"
+    if [[ "$?" != 0 ]]; then
+        defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/System/Applications/'"$1"'.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+    fi
+}
 
-# Visual Studio Code
-defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>/Applications/Visual Studio Code.app</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
-
+add_system_app_to_dock Calendar
+add_system_app_to_dock Mail
+add_system_app_to_dock Safari
+add_user_app_to_dock iTerm
+add_user_app_to_dock Spotify
+add_user_app_to_dock Visual\ Studio\ Code
+add_user_app_to_dock Slack
+add_user_app_to_dock Whatsapp
 
 killall Dock
+
+#########################
+######## Widgets ########
+#########################
+# World Clock
+defaults write com.apple.ncplugin.WorldClock geonameIDs '(
+    144150080859931951,
+    144136152979344160,
+    144136109570394583
+)'
+defaults write com.apple.ncplugin.WorldClock timeZoneIDs '(
+    "America/Los_Angeles",
+    "Europe/London",
+    "America/Argentina/Buenos_Aires"
+)'
+
+killall NotificationCenter
+
+#########################
+####### Menu Bar ########
+#########################
+
+# Clock
+defaults write com.apple.menuextra.clock DateFormat "EEE MMM d h:mm a"
+defaults write com.apple.menuextra.clock isAnalog  0
+
+
+killall SystemUIServer
 
 #########################
 ######### Safari ########
 #########################
 
 # Don’t send search queries to Apple
-#defaults write com.apple.Safari UniversalSearchEnabled -bool false
-#defaults write com.apple.Safari SuppressSearchSuggestions -bool true
+defaults write com.apple.Safari UniversalSearchEnabled -bool false
+defaults write com.apple.Safari SuppressSearchSuggestions -bool true
 
 # Show the full URL in the address bar
-#defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
 
 # Prevent Safari from opening ‘safe’ files automatically after downloading
-#defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
+defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
 
 # Enable Safari’s debug menu
-#defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
+defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
 
+killall Safari
 #########################
 ##### Apple Mail ########
 #########################
 
 # Disable send and reply animations in Mail.app
-#defaults write com.apple.mail DisableReplyAnimations -bool true
-#defaults write com.apple.mail DisableSendAnimations -bool true
+defaults write com.apple.mail DisableReplyAnimations -bool true
+defaults write com.apple.mail DisableSendAnimations -bool true
 
 # Copy email addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>` in Mail.app
-#defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
+defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 
 # Display emails in threaded mode, sorted by date
-#defaults write com.apple.mail DraftsViewerAttributes -dict-add "DisplayInThreadedMode" -string "yes"
-#defaults write com.apple.mail DraftsViewerAttributes -dict-add "SortedDescending" -string "yes"
+defaults write com.apple.mail DraftsViewerAttributes -dict-add "DisplayInThreadedMode" -string "yes"
+defaults write com.apple.mail DraftsViewerAttributes -dict-add "SortedDescending" -string "yes"
 
 # Disable inline attachments (just show the icons)
-#defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
+defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
+
+killall Mail
 
 #########################
 #### Spotlight ##########
 #########################
-# TODO:
+defaults write com.apple.spotlight orderedItems -array \
+	'{"enabled" = 1;"name" = "APPLICATIONS";}' \
+	'{"enabled" = 1;"name" = "SYSTEM_PREFS";}' \
+	'{"enabled" = 1;"name" = "DIRECTORIES";}' \
+	'{"enabled" = 1;"name" = "PDF";}' \
+	'{"enabled" = 1;"name" = "FONTS";}' \
+	'{"enabled" = 0;"name" = "DOCUMENTS";}' \
+	'{"enabled" = 0;"name" = "MESSAGES";}' \
+	'{"enabled" = 0;"name" = "CONTACT";}' \
+	'{"enabled" = 0;"name" = "EVENT_TODO";}' \
+	'{"enabled" = 0;"name" = "IMAGES";}' \
+	'{"enabled" = 0;"name" = "BOOKMARKS";}' \
+	'{"enabled" = 0;"name" = "MUSIC";}' \
+	'{"enabled" = 0;"name" = "MOVIES";}' \
+	'{"enabled" = 0;"name" = "PRESENTATIONS";}' \
+	'{"enabled" = 0;"name" = "SPREADSHEETS";}' \
+	'{"enabled" = 0;"name" = "SOURCE";}' \
+	'{"enabled" = 0;"name" = "MENU_DEFINITION";}' \
+	'{"enabled" = 0;"name" = "MENU_OTHER";}' \
+	'{"enabled" = 0;"name" = "MENU_CONVERSION";}' \
+	'{"enabled" = 0;"name" = "MENU_EXPRESSION";}' \
+	'{"enabled" = 0;"name" = "MENU_WEBSEARCH";}' \
+	'{"enabled" = 0;"name" = "MENU_SPOTLIGHT_SUGGESTIONS";}'
+# Load new settings before rebuilding the index
+killall mds > /dev/null 2>&1
+# Make sure indexing is enabled for the main volume
+sudo mdutil -i on / > /dev/null
+# Rebuild the index from scratch
+sudo mdutil -E / > /dev/null
