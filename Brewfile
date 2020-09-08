@@ -1,6 +1,9 @@
 tap "versent/homebrew-taps"
 cask_args appdir: "/Applications"
 
+# Requires iCloud Sign In
+#brew "mas"
+
 cask "iterm2"
 cask "visual-studio-code"
 cask "insomnia"
@@ -16,7 +19,19 @@ cask "docker"
 cask "dropbox"
 cask "grammarly"
 
+# GNU instead of MacOS utilities
+brew "grep"
+brew "curl"
 brew "wget"
+brew "watch"
+brew "less"
+brew "more"
+brew "bash"
+
+# MacOS App Store
+#mas "Magnet", id: 441258766
+
+# Packages
 brew "awscli"
 brew "pyenv"
 brew "pyenv-virtualenv"
@@ -30,7 +45,6 @@ brew "fzf"
 brew "git"
 brew "bat"
 brew "ansible"
-brew "watch"
 brew "ipython"
 brew "jq"
 brew "kafkacat"

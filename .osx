@@ -20,18 +20,6 @@ enable_touch_id_sudo () {
 sudo su root -c "$(declare -f enable_touch_id_sudo); enable_touch_id_sudo"
 
 #########################
-##### HomeBrew ##########
-#########################
-
-which -s brew >/dev/null
-if [[ "$?" != 0 ]] ; then
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-fi
-
-cp Brewfile ~/Brewfile
-brew bundle install
-
-#########################
 ####### Global ##########
 #########################
 
@@ -208,3 +196,16 @@ killall mds > /dev/null 2>&1
 sudo mdutil -i on / > /dev/null
 # Rebuild the index from scratch
 sudo mdutil -E / > /dev/null
+
+#########################
+##### HomeBrew ##########
+#########################
+
+which -s brew >/dev/null
+if [[ "$?" != 0 ]] ; then
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+fi
+
+cp Brewfile ~/Brewfile
+brew bundle install
+pyenv install 3.8.5
