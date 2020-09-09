@@ -6,6 +6,10 @@ set -u
 # Ask for password upfront
 sudo -v
 
+#########################
+##### OS Configs ########
+#########################
+
 # Use touch-id instead of typing the root password
 enable_touch_id_sudo () {
     if [ $EUID -ne 0 ]; then
@@ -19,15 +23,48 @@ enable_touch_id_sudo () {
 
 sudo su root -c "$(declare -f enable_touch_id_sudo); enable_touch_id_sudo"
 
+# Update hostname
+sudo scutil --set HostName entropy      # Primary hostname
+sudo scutil --set LocalHostName entropy # Bonjour hostname
+sudo scutil --set ComputerName entropy  # Computer name
+# Flush Cache
+dscacheutil -flushcache
+
+
 #########################
+##### HomeBrew ##########
+#########################
+
+which -s brew >/dev/null
+if [[ "$?" != 0 ]] ; then
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+fi
+
+cp Brewfile ~/Brewfile
+brew bundle install
+pyenv install 3.8.5
+
+#########################
+##### Defaults ##########
+#########################
+
 ####### Global ##########
-#########################
 
 # Enable Dark Mode - Requires log out
 defaults write "Apple Global Domain" AppleInterfaceStyle -string "Dark"
 
 # Finder: Show File Name extensions
-defaults write "Apple Global Domain" AppleShowAllExtensions -bool true
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+####### Finder ##########
+
+# Finder: Show File Name extensions
+defaults write com.apple.finder AppleShowAllFiles -bool true
+
+# Search on the current folder by default
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+
+##### Trackpad ##########
 
 # Secondary Click on right corner - Requires log out
 defaults write "Apple Global Domain"  ContextMenuGesture -integer 1
@@ -36,18 +73,9 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightC
 defaults write com.apple.AppleMultitouchTrackpad TrackpadCornerSecondaryClick -integer 2
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -integer 2
 
-# Primary hostname
-sudo scutil --set HostName entropy
-# Bonjour hostname
-sudo scutil --set LocalHostName entropy
-# Computer name
-sudo scutil --set ComputerName entropy
-# Flush Cache
-dscacheutil -flushcache
 
-#########################
-##### MacOS Dock ########
-#########################
+##### Dock ##########
+
 # Autohide
 defaults write com.apple.dock autohide -bool true
 defaults write com.apple.dock autohide-delay -float 0
@@ -98,9 +126,9 @@ add_user_app_to_dock Whatsapp
 
 killall Dock
 
-#########################
+
 ######## Widgets ########
-#########################
+
 # World Clock
 defaults write com.apple.ncplugin.WorldClock geonameIDs '(
     144150080859931951,
@@ -115,97 +143,31 @@ defaults write com.apple.ncplugin.WorldClock timeZoneIDs '(
 
 killall NotificationCenter
 
-#########################
 ####### Menu Bar ########
-#########################
 
 # Clock
 defaults write com.apple.menuextra.clock DateFormat "EEE MMM d h:mm a"
-defaults write com.apple.menuextra.clock isAnalog  0
-
+defaults write com.apple.menuextra.clock isAnalog -bool false
 
 killall SystemUIServer
 
-#########################
-######### Safari ########
-#########################
-
-# Don’t send search queries to Apple
-defaults write com.apple.Safari UniversalSearchEnabled -bool false
-defaults write com.apple.Safari SuppressSearchSuggestions -bool true
-
-# Show the full URL in the address bar
-defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
-
-# Prevent Safari from opening ‘safe’ files automatically after downloading
-defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
-
-# Enable Safari’s debug menu
-defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
-
-killall Safari
-#########################
 ##### Apple Mail ########
-#########################
+
+#TODO: Need to test
 
 # Disable send and reply animations in Mail.app
-defaults write com.apple.mail DisableReplyAnimations -bool true
-defaults write com.apple.mail DisableSendAnimations -bool true
+#defaults write com.apple.mail DisableReplyAnimations -bool true
+#defaults write com.apple.mail DisableSendAnimations -bool true
 
 # Copy email addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>` in Mail.app
-defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
+#defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 
 # Display emails in threaded mode, sorted by date
-defaults write com.apple.mail DraftsViewerAttributes -dict-add "DisplayInThreadedMode" -string "yes"
-defaults write com.apple.mail DraftsViewerAttributes -dict-add "SortedDescending" -string "yes"
+#defaults write com.apple.mail DraftsViewerAttributes -dict-add "DisplayInThreadedMode" -string "yes"
+#defaults write com.apple.mail DraftsViewerAttributes -dict-add "SortedDescending" -string "yes"
 
 # Disable inline attachments (just show the icons)
-defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
+#defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
 
 killall Mail
 
-#########################
-#### Spotlight ##########
-#########################
-defaults write com.apple.spotlight orderedItems -array \
-	'{"enabled" = 1;"name" = "APPLICATIONS";}' \
-	'{"enabled" = 1;"name" = "SYSTEM_PREFS";}' \
-	'{"enabled" = 1;"name" = "DIRECTORIES";}' \
-	'{"enabled" = 1;"name" = "PDF";}' \
-	'{"enabled" = 1;"name" = "FONTS";}' \
-	'{"enabled" = 0;"name" = "DOCUMENTS";}' \
-	'{"enabled" = 0;"name" = "MESSAGES";}' \
-	'{"enabled" = 0;"name" = "CONTACT";}' \
-	'{"enabled" = 0;"name" = "EVENT_TODO";}' \
-	'{"enabled" = 0;"name" = "IMAGES";}' \
-	'{"enabled" = 0;"name" = "BOOKMARKS";}' \
-	'{"enabled" = 0;"name" = "MUSIC";}' \
-	'{"enabled" = 0;"name" = "MOVIES";}' \
-	'{"enabled" = 0;"name" = "PRESENTATIONS";}' \
-	'{"enabled" = 0;"name" = "SPREADSHEETS";}' \
-	'{"enabled" = 0;"name" = "SOURCE";}' \
-	'{"enabled" = 0;"name" = "MENU_DEFINITION";}' \
-	'{"enabled" = 0;"name" = "MENU_OTHER";}' \
-	'{"enabled" = 0;"name" = "MENU_CONVERSION";}' \
-	'{"enabled" = 0;"name" = "MENU_EXPRESSION";}' \
-	'{"enabled" = 0;"name" = "MENU_WEBSEARCH";}' \
-	'{"enabled" = 0;"name" = "MENU_SPOTLIGHT_SUGGESTIONS";}'
-# Load new settings before rebuilding the index
-killall mds > /dev/null 2>&1
-# Make sure indexing is enabled for the main volume
-sudo mdutil -i on / > /dev/null
-# Rebuild the index from scratch
-sudo mdutil -E / > /dev/null
-
-#########################
-##### HomeBrew ##########
-#########################
-
-which -s brew >/dev/null
-if [[ "$?" != 0 ]] ; then
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-fi
-
-cp Brewfile ~/Brewfile
-brew bundle install
-pyenv install 3.8.5
