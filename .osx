@@ -10,6 +10,14 @@ sudo -v
 ##### OS Configs ########
 #########################
 
+ask_yes_or_no () {
+    read -p "$1 ([y]es or [N]o - Default no)"
+    case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
+        y|yes) echo "yes" ;;
+        *)     echo "no" ;;
+    esac
+}
+
 # Use touch-id instead of typing the root password
 enable_touch_id_sudo () {
     if [ $EUID -ne 0 ]; then
@@ -21,14 +29,18 @@ enable_touch_id_sudo () {
     chmod 444 /etc/pam.d/sudo
 }
 
-sudo su root -c "$(declare -f enable_touch_id_sudo); enable_touch_id_sudo"
+if [[ "yes" == $(ask_yes_or_no "Use touch-id as sudo?") ]]; then
+    sudo su root -c "$(declare -f enable_touch_id_sudo); enable_touch_id_sudo"
+fi
 
 # Update hostname
-sudo scutil --set HostName entropy      # Primary hostname
-sudo scutil --set LocalHostName entropy # Bonjour hostname
-sudo scutil --set ComputerName entropy  # Computer name
-# Flush Cache
-dscacheutil -flushcache
+if [[ "yes" == $(ask_yes_or_no "Update hostname?") ]]; then
+    sudo scutil --set HostName entropy      # Primary hostname
+    sudo scutil --set LocalHostName entropy # Bonjour hostname
+    sudo scutil --set ComputerName entropy  # Computer name
+    # Flush Cache
+    dscacheutil -flushcache
+fi
 
 
 #########################
@@ -44,6 +56,20 @@ cp Brewfile ~/Brewfile
 brew bundle install
 pyenv install 3.8.5
 
+# Visual Code - Extensions
+code --install-extension dotiful.dotfiles-syntax-highlighting
+code --install-extension redhat.vscode-yaml
+code --install-extension vscode.vim
+code --install-extension eamodio.gitlens
+code --install-extension donjayamanne.githistory
+code --install-extension shardulm94.trailing-spaces
+code --install-extension ms-python.python
+code --install-extension shakram02.bash-beautify
+code --install-extension puppet.puppet-vscode
+code --install-extension hashicorp.terraform
+code --install-extension shyykosherhiy.vscode-spotify
+
+
 #########################
 ##### Defaults ##########
 #########################
@@ -55,6 +81,9 @@ defaults write "Apple Global Domain" AppleInterfaceStyle -string "Dark"
 
 # Finder: Show File Name extensions
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+# Auto hide menu bar
+defaults write "Apple Global Domain" _HIHideMenuBar -bool true
 
 ####### Finder ##########
 
@@ -73,6 +102,8 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightC
 defaults write com.apple.AppleMultitouchTrackpad TrackpadCornerSecondaryClick -integer 2
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -integer 2
 
+# Silent clicking
+defaults write com.apple.AppleMultitouchTrackpad ActuationStrength -bool false
 
 ##### Dock ##########
 
@@ -126,23 +157,6 @@ add_user_app_to_dock Whatsapp
 
 killall Dock
 
-
-######## Widgets ########
-
-# World Clock
-defaults write com.apple.ncplugin.WorldClock geonameIDs '(
-    144150080859931951,
-    144136152979344160,
-    144136109570394583
-)'
-defaults write com.apple.ncplugin.WorldClock timeZoneIDs '(
-    "America/Los_Angeles",
-    "Europe/London",
-    "America/Argentina/Buenos_Aires"
-)'
-
-killall NotificationCenter
-
 ####### Menu Bar ########
 
 # Clock
@@ -150,24 +164,4 @@ defaults write com.apple.menuextra.clock DateFormat "EEE MMM d h:mm a"
 defaults write com.apple.menuextra.clock isAnalog -bool false
 
 killall SystemUIServer
-
-##### Apple Mail ########
-
-#TODO: Need to test
-
-# Disable send and reply animations in Mail.app
-#defaults write com.apple.mail DisableReplyAnimations -bool true
-#defaults write com.apple.mail DisableSendAnimations -bool true
-
-# Copy email addresses as `foo@example.com` instead of `Foo Bar <foo@example.com>` in Mail.app
-#defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
-
-# Display emails in threaded mode, sorted by date
-#defaults write com.apple.mail DraftsViewerAttributes -dict-add "DisplayInThreadedMode" -string "yes"
-#defaults write com.apple.mail DraftsViewerAttributes -dict-add "SortedDescending" -string "yes"
-
-# Disable inline attachments (just show the icons)
-#defaults write com.apple.mail DisableInlineAttachmentViewing -bool true
-
-killall Mail
 

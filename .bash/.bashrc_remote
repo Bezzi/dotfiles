@@ -1,0 +1,212 @@
+#!/bin/bash
+#=====================================#
+# Exports
+#=====================================#
+export LS_COLORS="no=00:fi=00:di=00;34:ln=00;36:pi=40;33:so=00;35:bd=40;33;01:ex=00;35"
+export EDITOR=/usr/bin/vim
+export HISTFILESIZE=
+export HISTSIZE=
+export HISTTIMEFORMAT="[%F %T] "
+export HISTFILE=~/.bash_eternal_history
+# Append to history instead of overwriting it
+shopt -s histappend
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
+#PROMPT_COMMAND='history -a;history -n'
+# No duplicate lines in the history and no lines that start with a space
+export HISTCONTROL=erasedups:ignoredups:ignorespace
+# Color for manpages
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+#=====================================#
+# Aliases / Functions
+#=====================================#
+# Bash
+alias ..="cd .."
+alias ...="cd ../.."
+alias cp="cp -iv"
+alias mv="mv -iv"
+alias mkdir="mkdir -pv"
+mkcd () { mkdir -p "$@" && cd "$@"; }
+alias ll="ls -FGlAhp --color"
+alias path='echo -e ${PATH//:/\\n}'                    # path: Echo all executable Paths
+alias dps='sudo docker ps'
+alias s='sudo'
+alias ifc="ifconfig -a |  egrep -v 'TX|RX|tx|MTU|Int'" # ifc: Removes all unwanted data from the command.
+alias sctl='systemctl --no-pager'
+alias apt-install='sudo apt-get -y install '
+alias pubip='wget -qO- ifconfig.co'                    # pubip: Get public IP
+alias c='clear'
+alias h='history'
+alias cs='clear;ls'
+alias k='kill'
+alias null='/dev/null'
+alias home='cd ~'
+alias ports='netstat -tulanp'
+alias iptlist='sudo /sbin/iptables -L -n -v --line-numbers'
+alias topcpu="/bin/ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10"
+
+# Git
+alias gdiff='git diff --ws-error-highlight=all'                         # gdiff: Diff that shows trailing white spaces in color.
+alias gsubupdate='git submodule update --init --recursive'
+alias guncommit='git reset HEAD~'
+alias gfetch-branches='git fetch -p'                                    # gfetch-branches: This will update the local database of remote branches.
+alias gpush-current='git push origin `git rev-parse --abbrev-ref HEAD`' # gpush-current: Pushes changes to current branch
+alias grmu='git checkout -- *'                                          # grmu: Removes all untracked files
+alias gsl='git stash list'
+alias gss='git stash save -u'
+alias g='git'
+alias ga='git add'
+alias gaa='git add --all'
+alias gb='git branch'
+alias gc!='git commit -v --amend'
+alias gca='git commit -v -a'
+alias gcb='git checkout -b'
+alias gcom='git commit -m'
+alias gco='git checkout'
+alias gd='git diff'
+alias glg="git log --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias glgp='git log --stat -p'
+alias gpush='git push'
+alias gpull='git pull'
+alias gs="git status"
+alias gunstage='git reset HEAD'                                         # gunstage: Unstage staged files
+alias gstaged='git diff --staged'                                       # gstaged: Diffs staged files
+alias gpartial-commit='git add --patch'                                 # gpartial-commit: Partially commit files
+alias gcp='git cherry-pick'
+
+function gro {
+  # "Git remote open": Open current git repo in browser
+  open $(git config remote.origin.url | sed "s/git@\(.*\):\(.*\).git/https:\/\/\1\/\2/")/$1$2
+}
+
+function gpr() {
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  PR_URL="compare/master...gaston-te:${CURRENT_BRANCH}?expand=1"
+  open $(git config remote.upstream.url | sed "s/git@\(.*\):\(.*\).git/https:\/\/\1\/\2/")/$PR_URL
+}
+
+function go {
+  open -a Safari "https://github.com"
+}
+
+function gc {
+  # Git clone and cd into repo
+  git clone "$1" && cd "$(basename "$1" .git)"
+}
+
+function grp {
+  # "Git remote print" Print repo origin url
+  echo $(git config remote.origin.url | sed "s/git@\(.*\):\(.*\).git/https:\/\/\1\/\2/")/$1$2
+}
+
+function gco-prod {
+  # Checkout to prod remote branch after fetching it from upstream.
+  git fetch upstream; git branch -f prod upstream/prod; git checkout prod
+}
+
+function gu-master {
+  # Git update master - rebase upstream
+  git stash save -u ; git checkout master; git fetch upstream; git rebase upstream/master
+}
+
+function gu-prod {
+  # Git update prod - rebase upstream
+  git checkout prod; git fetch upstream prod; git rebase upstream/prod
+}
+
+function gp-release {
+  # Create a new release tag on repo based on previous value (Ex. 0.0.1 -> 0.0.2)
+  VERSION=$(git tag -l | tail -1 | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
+  git tag -a $VERSION -m  "${VERSION}"
+  git push upstream --tags
+}
+#=====================================#
+# Bash prompt customization
+#=====================================#
+export GIT_PS1_SHOWDIRTYSTATE=1
+export GIT_PS1_SHOWUPSTREAM="auto"
+
+# Sets the terminal title
+PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}\007"'
+
+IP=`curl -s v4.ident.me`
+if [ -z $IP ]
+then
+  IP=`hostname -I | cut -d' ' -f1`
+fi
+
+rightprompt(){
+ printf "%*s" $COLUMNS "$(date +"%e %b %r")"
+ printf "%*s" $COLUMNS "$(__git_ps1) "\u@\h:\w" "\\\$ ""
+}
+
+git_status_bar='\[\e[10;32m\]$(__git_ps1 " (%s)") \[\e[m\]| '
+
+leftprompt="\[\e[31m\]\u\[\e[m\]@\H [$IP] \[\e[34m\]\w\[\e[m\]"
+#export PS1="\[$(tput sc;rightprompt; tput rc)\]$(echo $leftprompt" ")"
+#export PS1="\[$(tput sc;rightprompt; tput rc)\]$(echo $leftprompt""$(echo $git_status_bar)" rc:\$? > ")"
+export PS1="$(echo $leftprompt""$(echo $git_status_bar)" rc:\$? > ")"
+
+#=====================================#
+# Helper functions
+#=====================================#
+
+# Faster awk column print ( fawk 1 == awk {'print $1'} )
+function fawk {
+    first="awk '{print "
+    last="}'"
+    cmd="${first}\$${1}${last}"
+    eval $cmd
+}
+
+function diff-files {
+  /bin/bash -c "diff <(sort ${1}) <(sort ${2})"
+}
+
+# Stat-ls: Displays path files permissions in octal format.
+function sls() {
+  bold=$(tput bold)
+  normal=$(tput sgr0)
+  split="${bold}|${normal}"
+  stat -c "%A (%a) $split %F $split %U %G $split ${bold}%N${normal} " $@{.,}*
+}
+
+# Disk-ls: Displays path files permissions in octal format and shows disk-usage.
+function dls(){
+  bold=$(tput bold)
+  normal=$(tput sgr0)
+  split="${bold}|${normal}"
+  for file in $@{.,}* ; do
+    fdu=`du -Pshx $file 2>/dev/null | awk '{print $1}'`
+    fstat=`stat -c "$split %A (%a) $split %U:%G $split %F $split ${bold}%N${normal} " $file 2>/dev/null`
+    printf "${bold}%-4.4s${normal} %s \n" "$fdu" "$fstat"
+  done;
+}
+
+# Find files greater than 100Mb
+function ffiles(){
+  sudo find / -xdev -size +100M -exec du -bh {} \;
+}
+
+# Dump a list of every directory on the filesystem prefixed with the number of files
+function inodes(){
+  sudo find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n
+}
+
+# Searches for text in all files in the current folder
+function ftext () {
+  # -i case-insensitive
+  # -I ignore binary files
+  # -H causes filename to be printed
+  # -r recursive search
+  # -n causes line number to be printed
+  # optional: -F treat search term as a literal, not a regular expression
+  # optional: -l only print filenames and not the matching lines ex. grep -irl "$1" *
+	grep -iIHrn --color=always "$1" . | less -r
+}

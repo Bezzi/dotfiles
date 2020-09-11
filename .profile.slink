@@ -1,0 +1,6 @@
+# Default shell in MacOS is zsh
+sudo sh -c 'grep -q "/usr/local/bin/bash" /etc/shells || echo "/usr/local/bin/bash" >> /etc/shells'
+if [[ "$SHELL" != "/usr/local/bin/bash" ]]; then
+    chsh -s /usr/local/bin/bash
+fi
+source ~/.bash_profile

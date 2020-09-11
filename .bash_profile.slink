@@ -1,0 +1,9 @@
+# Customize terminal prompt with git
+wget -qN -O ~/.dotfiles/.bash/.git_prompt.sh https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+wget -qN -O ~/.dotfiles/.bash/.forgit.plugin.sh https://raw.githubusercontent.com/wfxr/forgit/master/forgit.plugin.zsh
+
+source ~/.dotfiles/.bash/.git_prompt.sh
+source ~/.dotfiles/.bash/.bashrc
+source ~/.dotfiles/.bash/.bashrc_remote
+source ~/.dotfiles/.bash/.fzf.bash
+source ~/.dotfiles/.bash/.forgit.plugin.sh

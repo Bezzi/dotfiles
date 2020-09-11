@@ -1,1 +1,4 @@
 Brewfile.lock.json
+.tmux/themes/*
+.bash/.git_prompt.sh 
+.bash/.forgit.plugin.sh
