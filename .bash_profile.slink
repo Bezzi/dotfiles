@@ -16,3 +16,7 @@ if type brew &>/dev/null; then
     done
   fi
 fi
+
+# https://github.com/pyenv/pyenv-virtualenv
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
