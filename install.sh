@@ -37,6 +37,7 @@ setup_symlinks() {
 if [[ "yes" == $(ask_yes_or_no "Set up MacOS defaults and packages?") ]]; then
     ~/.dotfiles/.osx
     ~/.dotfiles/iterm2/defaults.sh
+    install -m 755 ~/.dotfiles/osascripts/* /usr/local/bin
 fi
 
 if [[ "yes" == $(ask_yes_or_no "Set up dotfiles symlinks ?") ]]; then

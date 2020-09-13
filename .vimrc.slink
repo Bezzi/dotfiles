@@ -1,0 +1,130 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set autoread          " Set to auto read when a file is changed from the outside
+set clipboard=unnamed " Sets the OS X clipboard
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader = ","
+let g:mapleader = ","
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" :W sudo saves the file
+" (useful for handling the permission-denied error)
+command W w !sudo tee % > /dev/null
+
+" Always cd into the working file directory
+set autochdir
+
+" Disable modeline - Security issues
+set modelines=0
+set nomodeline
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set expandtab                 " Use spaces instead of tabs
+set softtabstop=2             " number of spaces in tab when editing
+set tabstop=2                 " number of visual spaces per TAB
+autocmd BufEnter * lcd %:p:h  " Auto change the directory to the current file I'm working on
+set autoindent              " automatically set indent of new line
+set smartindent
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+syntax enable               " Enable syntax highlighting
+set t_Co=256                " Enable 256 colors palette in Gnome Terminal
+"set background=dark
+"colorscheme onehalfdark "Enables custom theme
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Backup off, that's why i've got GIT
+set nobackup
+set nowb
+set noswapfile
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set number                     " show line numbers
+set showcmd                    " show command in bottom bar
+set cursorline                 " highlight current line
+filetype indent on             " load filetype-specific indent files
+set wildmenu                   " visual autocomplete for command menu
+set lazyredraw                 " redraw only when we need to.
+set showmatch                  " highlight matching [{()}]
+set scrolloff=7                " scrolls the text so that there are 7 above the cursor - when moving vertically using j/k
+set backspace=indent,eol,start " Makes backspace work like any other program.
+" Searching
+set incsearch           " search as characters are entered
+"set hlsearch            " highlight matches
+" turn off search highlight (Mapped to space)
+nnoremap <leader><space> :nohlsearch<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs, windows and buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" move to beginning/end of line
+nnoremap B ^
+nnoremap E $
+" $/^ doesn't do anything
+nnoremap $ <nop>
+nnoremap ^ <nop>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugins configurations.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plugin manager init
+"execute pathogen#infect()
+"syntax on
+"filetype plugin indent on
+
+" Tmux
+"""""""""""""""""""""""""""""""""""""
+" allows cursor change in tmux mode
+if exists('$TMUX')
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
+" NerdTree
+"""""""""""""""""""""""""""""""""""""
+" Toggle NERDTree
+"autocmd vimenter * NERDTree
+"autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+
+"set mouse=a " Enable mouse
+"let g:NERDTreeDirArrowExpandable = '▸'
+"let g:NERDTreeDirArrowCollapsible = '▾'
+":hi Directory ctermfg=Grey
+
+" Syntastic
+"""""""""""""""""""""""""""""""""""""
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+
+" Fugitive Shortcuts
+"""""""""""""""""""""""""""""""""""""
+"nmap <silent> <leader>gs :Gstatus<cr>
+"nmap <leader>ge :Gedit<cr>
+"nmap <silent><leader>gb :Gblame<cr>
+
+"let g:ale_change_sign_column_color = 1
+"let g:ale_sign_column_always = 1
+"let g:ale_sign_error = '✖'
+"let g:ale_sign_warning = '⚠'

@@ -1,0 +1,58 @@
+set-option -g default-shell /usr/local/bin/bash
+set -g default-terminal "screen-256color"
+
+# scrollback size
+set -g history-limit 10000
+
+# reload config file
+bind r source-file ~/.tmux.conf
+
+# Enable mouse mode
+set -g mouse on
+
+# Start window numbering at 1
+set -g base-index 1
+
+# start with pane 1
+set -g pane-base-index 1
+
+# Use | and - to split a window vertically and horizontally instead of " and %
+bind \ split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+unbind '"'
+unbind %
+
+# switch panes using Alt-arrow without prefix
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
+
+
+############### Style ###############
+set -g @nord_tmux_no_patched_font "1"
+run-shell "~/.dotfiles/.tmux/themes/nord-tmux/nord.tmux"
+
+############### Spotify #############
+set -g status-right '#(spotify-info.js) | %a %m-%d %H:%M'
+set -g status-right-length 75
+set -g status-left-length 45
+#-------------------------------------------------------#
+# Pane colours
+#-------------------------------------------------------#
+# set inactive/active window styles
+set -g window-style 'fg=colour247,bg=colour236'
+set -g window-active-style 'fg=colour255,bg=black'
+
+#pane border
+set -g pane-border-bg colour236
+#set -g pane-border-fg colour238
+set -g pane-active-border-bg colour236
+set -g pane-active-border-fg colour81
+#-------------------------------------------------------#
+
+# Ctrl - w or w to kill panes
+unbind w
+unbind C-w
+bind-key w kill-pane
+bind-key C-w kill-pane
