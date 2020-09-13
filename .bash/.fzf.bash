@@ -10,7 +10,8 @@ fi
 
 # Key bindings
 # ------------
-source "/usr/local/opt/fzf/shell/key-bindings.bash"
+[[ $- == *i* ]] &&  source "/usr/local/opt/fzf/shell/key-bindings.bash" 2> /dev/null
+
 
 # Export defaults
 # ------------

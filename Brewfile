@@ -27,6 +27,7 @@ brew "less"
 brew "bash"
 
 # Packages
+brew "neovim"
 brew "awscli"
 brew "pyenv"
 brew "pyenv-virtualenv"

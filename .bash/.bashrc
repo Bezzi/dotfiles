@@ -9,7 +9,7 @@ sssh() {
 }
 
 function cert-view-remote(){
-  openssl s_client -showcerts -connect $1:443 --servername $1 2>/dev/null | openssl x509 -subject -issuer -dates -email -noout -fingerprint -serial
+  openssl s_client -showcerts -connect $1:${2:-443} -servername $1 2>/dev/null | openssl x509 -subject -issuer -dates -email -noout -fingerprint -serial
 }
 
 function cert-view(){
