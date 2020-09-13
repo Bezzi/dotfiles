@@ -1,9 +1,18 @@
-# Customize terminal prompt with git
-wget -qN -O ~/.dotfiles/.bash/.git_prompt.sh https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 wget -qN -O ~/.dotfiles/.bash/.forgit.plugin.sh https://raw.githubusercontent.com/wfxr/forgit/master/forgit.plugin.zsh
 
-source ~/.dotfiles/.bash/.git_prompt.sh
 source ~/.dotfiles/.bash/.bashrc
 source ~/.dotfiles/.bash/.bashrc_remote
 source ~/.dotfiles/.bash/.fzf.bash
 source ~/.dotfiles/.bash/.forgit.plugin.sh
+
+# https://docs.brew.sh/Shell-Completion#configuring-completions-in-bash
+if type brew &>/dev/null; then
+  HOMEBREW_PREFIX="$(brew --prefix)"
+  if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+    source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+  else
+    for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+      [[ -r "$COMPLETION" ]] && source "$COMPLETION"
+    done
+  fi
+fi

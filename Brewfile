@@ -25,6 +25,7 @@ brew "wget"
 brew "watch"
 brew "less"
 brew "bash"
+brew "coreutils"
 
 # Packages
 brew "neovim"
@@ -49,3 +50,4 @@ brew "kubeseal"
 brew "kustomize"
 brew "nmap"
 brew "packer"
+brew "asdf"
