@@ -31,6 +31,8 @@ enable_touch_id_sudo () {
 
 if [[ "yes" == $(ask_yes_or_no "Use touch-id as sudo?") ]]; then
     sudo su root -c "$(declare -f enable_touch_id_sudo); enable_touch_id_sudo"
+    echo 'By default doesn not work with iTerm2 or Tmux..'
+    # Solution: https://github.com/fabianishere/pam_reattach
 fi
 
 # Update hostname
@@ -52,7 +54,6 @@ if [[ "$?" != 0 ]] ; then
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
 
-cp Brewfile ~/Brewfile
 brew bundle install
 pyenv install 3.8.5
 
@@ -68,7 +69,6 @@ code --install-extension shakram02.bash-beautify
 code --install-extension puppet.puppet-vscode
 code --install-extension hashicorp.terraform
 code --install-extension shyykosherhiy.vscode-spotify
-
 
 #########################
 ##### Defaults ##########

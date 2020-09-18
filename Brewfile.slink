@@ -16,6 +16,7 @@ cask "dropbox"
 cask "grammarly"
 cask "lulu"
 cask "oversight"
+cask "taskexplorer"
 cask "monitorcontrol"
 
 # GNU instead of MacOS utilities
@@ -29,6 +30,7 @@ brew "coreutils"
 
 # Packages
 brew "neovim"
+brew "kafkacat"
 brew "awscli"
 brew "pyenv"
 brew "pyenv-virtualenv"
@@ -50,4 +52,3 @@ brew "kubeseal"
 brew "kustomize"
 brew "nmap"
 brew "packer"
-brew "asdf"

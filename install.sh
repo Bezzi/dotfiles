@@ -43,3 +43,8 @@ fi
 if [[ "yes" == $(ask_yes_or_no "Set up dotfiles symlinks ?") ]]; then
     setup_symlinks
 fi
+
+if [[ "yes" == $(ask_yes_or_no "Set up Neo vim?") ]]; then
+    mkdir -p ~/.config/nvim
+    ln -s ~/.dotfiles/.nvim/init.vim.slink ~/.config/nvim/init.vim
+fi

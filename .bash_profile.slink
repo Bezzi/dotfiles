@@ -1,4 +1,6 @@
-wget -qN -O ~/.dotfiles/.bash/.forgit.plugin.sh https://raw.githubusercontent.com/wfxr/forgit/master/forgit.plugin.zsh
+#ts=$(gdate +%s%N)
+wget -qN -O ~/.dotfiles/.bash/.forgit.plugin.sh https://raw.githubusercontent.com/wfxr/forgit/master/forgit.plugin.zsh & disown
+mkdir -p ~/.local/share/nvim/site/autoload &&  wget -qN -O ~/.local/share/nvim/site/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim & disown
 
 source ~/.dotfiles/.bash/.bashrc
 source ~/.dotfiles/.bash/.bashrc_remote
@@ -18,5 +20,9 @@ if type brew &>/dev/null; then
 fi
 
 # https://github.com/pyenv/pyenv-virtualenv
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+pyenv-init() {
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+}
+
+#tt=$((($(gdate +%s%N) - $ts)/1000000)) ; echo $tt

@@ -10,10 +10,11 @@ export HISTTIMEFORMAT="[%F %T] "
 export HISTFILE=~/.bash_eternal_history
 # Append to history instead of overwriting it
 shopt -s histappend
+# Store bash history inmediatly
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-#PROMPT_COMMAND='history -a;history -n'
 # No duplicate lines in the history and no lines that start with a space
-export HISTCONTROL=erasedups:ignoredups:ignorespace
+export HISTCONTROL=ignoreboth:erasedups
+export HISTIGNORE="ls:ps:history"
 # Color for manpages
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
@@ -135,11 +136,12 @@ export GIT_PS1_SHOWUPSTREAM="auto"
 # Sets the terminal title
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}\007"'
 
-IP=`curl -s v4.ident.me`
-if [ -z $IP ]
-then
-  IP=`hostname -I | cut -d' ' -f1`
-fi
+# IP=`curl -s v4.ident.me`
+# if [ -z $IP ]
+# then
+#   IP=`hostname -I | cut -d' ' -f1`
+# fi
+# leftprompt="\[\e[31m\]\u\[\e[m\]@\H [$IP] \[\e[34m\]\w\[\e[m\]"
 
 rightprompt(){
  printf "%*s" $COLUMNS "$(date +"%e %b %r")"
@@ -148,7 +150,7 @@ rightprompt(){
 
 git_status_bar='\[\e[10;32m\]$(__git_ps1 " (%s)") \[\e[m\]| '
 
-leftprompt="\[\e[31m\]\u\[\e[m\]@\H [$IP] \[\e[34m\]\w\[\e[m\]"
+leftprompt="\[\e[31m\]\u\[\e[m\]@\H \[\e[34m\]\w\[\e[m\]"
 #export PS1="\[$(tput sc;rightprompt; tput rc)\]$(echo $leftprompt" ")"
 #export PS1="\[$(tput sc;rightprompt; tput rc)\]$(echo $leftprompt""$(echo $git_status_bar)" rc:\$? > ")"
 export PS1="$(echo $leftprompt""$(echo $git_status_bar)" rc:\$? > ")"
