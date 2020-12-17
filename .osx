@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -e
 set -u
 
 # Ask for password upfront
@@ -37,30 +36,31 @@ fi
 
 # Update hostname
 if [[ "yes" == $(ask_yes_or_no "Update hostname?") ]]; then
-    sudo scutil --set HostName entropy      # Primary hostname
-    sudo scutil --set LocalHostName entropy # Bonjour hostname
-    sudo scutil --set ComputerName entropy  # Computer name
-    # Flush Cache
-    dscacheutil -flushcache
+   name=$(read -r)
+   sudo scutil --set HostName $name      # Primary hostname
+   sudo scutil --set LocalHostName $name # Bonjour hostname
+   sudo scutil --set ComputerName $name  # Computer name
+   # Flush Cache
+   dscacheutil -flushcache
 fi
 
 
 #########################
 ##### HomeBrew ##########
 #########################
-
 which -s brew >/dev/null
 if [[ "$?" != 0 ]] ; then
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 fi
 
+set +x
 brew bundle install --file=~/.Brewfile
 pyenv install 3.8.5
 pyenv virtualenv 3.8.5 venv38
 pyenv global venv38
-brew uninstall ruby
-rbenv install 2.7.1
-rbenv global 2.7.1
+brew uninstall --ignore-dependencies ruby
+rbenv install 2.7.2
+rbenv global 2.7.2
 
 
 # Visual Code - Extensions
