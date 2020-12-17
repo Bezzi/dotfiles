@@ -3,7 +3,7 @@ set-option -g default-shell /usr/local/bin/bash
 # Add truecolor support
 set-option -ga terminal-overrides ",xterm-256color:Tc"
 # Default terminal is 256 colors
-set -g default-terminal "screen-256color"
+#set -g default-terminal "screen-256color"
 
 # scrollback size
 set -g history-limit 10000
@@ -34,8 +34,8 @@ bind -n M-Down select-pane -D
 
 
 ############### Style ###############
-set -g @nord_tmux_no_patched_font "1"
-run-shell "~/.dotfiles/.tmux/themes/nord-tmux/nord.tmux"
+"set -g @nord_tmux_no_patched_font "1"
+"run-shell "~/.dotfiles/.tmux/themes/nord-tmux/nord.tmux"
 
 ############### Spotify #############
 set -g status-right '#(spotify-info.js) | %a %m-%d %H:%M'
@@ -45,14 +45,14 @@ set -g status-left-length 45
 # Pane colours
 #-------------------------------------------------------#
 # set inactive/active window styles
-set -g window-style 'fg=colour247,bg=colour236'
-set -g window-active-style 'fg=colour255,bg=black'
+"set -g window-style 'fg=colour247,bg=colour236'
+"set -g window-active-style 'fg=colour255,bg=black'
 
 #pane border
-set -g pane-border-bg colour236
+"set -g pane-border-bg colour236
 #set -g pane-border-fg colour238
-set -g pane-active-border-bg colour236
-set -g pane-active-border-fg colour81
+"set -g pane-active-border-bg colour236
+"set -g pane-active-border-fg colour81
 #-------------------------------------------------------#
 
 # Ctrl - w or w to kill panes

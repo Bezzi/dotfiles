@@ -1,5 +1,8 @@
-tap "versent/homebrew-taps"
 cask_args appdir: "/Applications"
+
+tap "versent/homebrew-taps"
+tap "homebrew/cask-fonts"
+tap "puppetlabs/puppet"
 
 cask "iterm2"
 cask "visual-studio-code"
@@ -18,6 +21,9 @@ cask "lulu"
 cask "oversight"
 cask "taskexplorer"
 cask "monitorcontrol"
+cask "font-hack-nerd-font"
+cask "google-cloud-sdk"
+cask "puppet-bolt"
 
 # GNU instead of MacOS utilities
 brew "grep"
@@ -29,6 +35,9 @@ brew "bash"
 brew "coreutils"
 
 # Packages
+brew "rbenv"
+brew "minikube"
+brew "ruby-build"
 brew "neovim"
 brew "kafkacat"
 brew "awscli"

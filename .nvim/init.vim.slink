@@ -14,6 +14,44 @@ call plug#end()
 " => Configurations
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Disable modeline - Security issues
+set modelines=0
+set nomodeline
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs, windows and buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" move to beginning/end of line
+nnoremap B ^
+nnoremap E $
+" $/^ doesn't do anything
+nnoremap $ <nop>
+nnoremap ^ <nop>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set number                     " show line numbers
+set showcmd                    " show command in bottom bar
+set cursorline                 " highlight current line
+filetype indent on             " load filetype-specific indent files
+set scrolloff=7                " scrolls the text so that there are 7 above the cursor - when moving vertically using j/k
+set backspace=indent,eol,start " Makes backspace work like any other program.
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Backup off, that's why i've got GIT
+set nobackup
+set nowb
+set noswapfile
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if (has("termguicolors"))
  set termguicolors
 endif
@@ -21,21 +59,23 @@ syntax enable
 colorscheme one
 set background=dark
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set expandtab                 " Use spaces instead of tabs
+set softtabstop=2             " number of spaces in tab when editing
+set tabstop=2                 " number of visual spaces per TAB
+set autoindent              " automatically set indent of new line
+set smartindent
 
-" Switch between panels
-" use alt+hjkl to move between split/vsplit panels
-tnoremap <A-h> <C-\><C-n><C-w>h
-tnoremap <A-j> <C-\><C-n><C-w>j
-tnoremap <A-k> <C-\><C-n><C-w>k
-tnoremap <A-l> <C-\><C-n><C-w>l
-nnoremap <A-h> <C-w>h
-nnoremap <A-j> <C-w>j
-nnoremap <A-k> <C-w>k
-nnoremap <A-l> <C-w>l
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Integrated Neo Vim Terminal
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Open the terminal with CTRL-N
+" Quit insert mode in the terminal, press Esc.
+" Siwthc to the code editor pane, CTRL + w w
+
 " open new split panes to right and below
 set splitright
 set splitbelow
@@ -49,3 +89,32 @@ function! OpenTerminal()
   resize 10
 endfunction
 nnoremap <c-n> :call OpenTerminal()<CR>
+
+" Switch between panels: Alt+H, Alt+J, Alt+K, and Alt+L.
+tnoremap <A-h> <C-\><C-n><C-w>h
+tnoremap <A-j> <C-\><C-n><C-w>j
+tnoremap <A-k> <C-\><C-n><C-w>k
+tnoremap <A-l> <C-\><C-n><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugins configurations.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" NerdTree
+"""""""""""""""""""""""""""""""""""""
+" Show hidden files and dotfiles
+let g:NERDTreeShowHidden = 1
+
+let NERDTreeMinimalUI = 1
+let NERDTreeDirArrows = 1
+
+set mouse=a " Enable mouse
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+:hi Directory ctermfg=Grey
+
+" Toggle nerdtree with CTRL+n
+noremap <C-n> :NERDTreeToggle<cr>

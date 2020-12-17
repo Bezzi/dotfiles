@@ -25,4 +25,10 @@ pyenv-init() {
   eval "$(pyenv virtualenv-init -)"
 }
 
+# https://github.com/rbenv/rbenv
+rbenv-init() {
+  eval "$(rbenv init -)"
+}
+
+
 #tt=$((($(gdate +%s%N) - $ts)/1000000)) ; echo $tt
