@@ -55,13 +55,12 @@ fi
 
 set +x
 brew bundle install --file=~/.Brewfile
-pyenv install 3.8.5
-pyenv virtualenv 3.8.5 venv38
-pyenv global venv38
+pyenv install 3.10.6
+pyenv virtualenv 3.10.6 venv310
+pyenv global venv310
 brew uninstall --ignore-dependencies ruby
-rbenv install 2.7.2
-rbenv global 2.7.2
-
+rbenv install 3.1.0
+rbenv global 3.1.0
 
 # Visual Code - Extensions
 code --install-extension dotiful.dotfiles-syntax-highlighting

@@ -1,7 +1,6 @@
 #=====================================#
 # Helper functions
 #=====================================#
-
 # ssh and copy my .bashrc_remote
 sssh() {
     ssh -A ${*:1} "cat > /tmp/.bashrc_temp" < ~/.bashrc_remote
@@ -27,3 +26,8 @@ function cert-check-key(){
       echo "Invalid: Private key does not belong to the given certificate."
   fi
 }
+
+# https://krew.sigs.k8s.io/docs/user-guide/setup/install/
+if [ -d "$HOME/.krew" ]; then
+  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH";
+fi

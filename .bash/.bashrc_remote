@@ -92,10 +92,6 @@ function gpr() {
   open $(git config remote.upstream.url | sed "s/git@\(.*\):\(.*\).git/https:\/\/\1\/\2/")/$PR_URL
 }
 
-function go {
-  open -a Safari "https://github.com"
-}
-
 function gc {
   # Git clone and cd into repo
   git clone "$1" && cd "$(basename "$1" .git)"
@@ -132,7 +128,8 @@ function gp-release {
 #=====================================#
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWUPSTREAM="auto"
-
+# Shorten too long working-dir
+export PROMPT_DIRTRIM=1
 # Sets the terminal title
 PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME}\007"'
 
@@ -153,7 +150,12 @@ git_status_bar='\[\e[10;32m\]$(__git_ps1 " (%s)") \[\e[m\]| '
 leftprompt="\[\e[31m\]\u\[\e[m\]@\H \[\e[34m\]\w\[\e[m\]"
 #export PS1="\[$(tput sc;rightprompt; tput rc)\]$(echo $leftprompt" ")"
 #export PS1="\[$(tput sc;rightprompt; tput rc)\]$(echo $leftprompt""$(echo $git_status_bar)" rc:\$? > ")"
-export PS1="$(echo $leftprompt""$(echo $git_status_bar)" rc:\$? > ")"
+
+# Kube context in shell
+source /usr/local/opt/kube-ps1/share/kube-ps1.sh
+KUBE_PS1_PREFIX=''
+KUBE_PS1_SYMBOL_ENABLE=false
+export PS1="$(echo $leftprompt""$(echo $git_status_bar)" $(echo '$(kube_ps1)') rc:\$? > ")"
 
 #=====================================#
 # Helper functions

@@ -4,3 +4,4 @@ if [[ "$SHELL" != "/usr/local/bin/bash" ]]; then
     chsh -s /usr/local/bin/bash
 fi
 source ~/.bash_profile
+. "$HOME/.cargo/env"

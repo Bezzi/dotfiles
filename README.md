@@ -10,7 +10,7 @@ bash ./install.sh
 ```
 
 ```
-.osx: MacOS Brew managed packages 
+.osx: MacOS Brew managed packages
 .osxdefaults: MacOS system defaults configurations Finder, Trackpad, Dock, etc.
 .bash: Basrc Aliases, functions, etc.
 
@@ -26,3 +26,6 @@ Helper scripts used on Tmux nav-bar
 Iterm2:
 Atom colors profile and iterm2 configuration
 ```
+
+Change MacOS default login shell
+System Preferences -> User & Groups -> control + right click -> Advanced Options -> Login Shell -> /usr/local/bin/bash

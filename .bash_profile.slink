@@ -32,3 +32,4 @@ rbenv-init() {
 
 
 #tt=$((($(gdate +%s%N) - $ts)/1000000)) ; echo $tt
+. "$HOME/.cargo/env"

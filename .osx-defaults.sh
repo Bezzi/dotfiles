@@ -77,7 +77,6 @@ add_user_app_to_dock iTerm
 add_user_app_to_dock Spotify
 add_user_app_to_dock Visual\ Studio\ Code
 add_user_app_to_dock Slack
-add_user_app_to_dock Whatsapp
 
 killall Dock
 
